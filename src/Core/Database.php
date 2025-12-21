@@ -10,18 +10,6 @@ final class Database
 	private static ?Database $instance = null;
 	private PDO $connection;
 
-<?php
-
-namespace Src\Core;
-
-use PDO;
-use PDOException;
-
-final class Database
-{
-	private static ?Database $instance = null;
-	private PDO $connection;
-
 	private function __construct(array $config)
 	{
 		$dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
