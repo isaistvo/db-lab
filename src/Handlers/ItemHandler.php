@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Src\Handlers;
 
 use Src\Core\View;
+use Src\Core\Logger;
 use Src\DTO\CreateItemDTO;
 use Src\DTO\UpdateItemDTO;
 use Src\Mappers\ItemMapper;
@@ -37,6 +38,7 @@ class ItemHandler
                 'message' => $message,
             ]);
         } catch (\Throwable $e) {
+            Logger::error("Failed to load item list", ['error' => $e->getMessage()]);
             View::render('items/index', [
                 'items' => [],
                 'error' => $e->getMessage(),
@@ -83,9 +85,17 @@ class ItemHandler
         try {
             $dto = CreateItemDTO::fromArray($_POST);
             $this->service->createItem($dto);
+            Logger::info("Item created via handler", [
+                'name' => $dto->name,
+                'price' => $dto->price
+            ]);
             header('Location: ' . self::BASE_URL . '?r=item/create&success=1');
             exit;
         } catch (\Throwable $e) {
+            Logger::error("Failed to create item via handler", [
+                'error' => $e->getMessage(),
+                'input' => $_POST
+            ]);
             View::render('items/create', [
                 'error' => $e->getMessage(),
                 'form' => $_POST,
@@ -115,9 +125,15 @@ class ItemHandler
             $dto = UpdateItemDTO::fromArray($_POST);
             $dto->id = $id;
             $this->service->updateItem($id, $dto);
+            Logger::info("Item updated via handler", ['id' => $id]);
             header('Location: ' . self::BASE_URL . '?r=item/index&updated=1');
             exit;
         } catch (\Throwable $e) {
+            Logger::error("Failed to update item via handler", [
+                'error' => $e->getMessage(),
+                'id' => $id,
+                'input' => $_POST
+            ]);
             $formData = $_POST;
             $formData['id'] = $id;
             View::render('items/edit', [

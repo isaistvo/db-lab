@@ -11,6 +11,7 @@ use Src\Repositories\OrderRepository;
 use Src\Repositories\OrderItemRepository;
 use Src\Repositories\ItemRepository;
 use Src\Core\Database;
+use Src\Core\Logger;
 
 class OrderService
 {
@@ -50,6 +51,10 @@ class OrderService
 
         $order = OrderMapper::fromCreateDTO($dto);
         $this->repository->save($order);
+        Logger::info("Order created", [
+            'customer_id' => $dto->customerId,
+            'employee_id' => $dto->employeeId
+        ]);
     }
 
     public function updateOrder(int $id, UpdateOrderDTO $dto): void
@@ -70,11 +75,13 @@ class OrderService
 
         $order = OrderMapper::fromUpdateDTO($dto);
         $this->repository->update($order);
+        Logger::info("Order updated", ['order_id' => $id]);
     }
 
     public function deleteOrder(int $id): void
     {
         $this->repository->delete($id);
+        Logger::info("Order deleted", ['order_id' => $id]);
     }
 
     // --- Order Items logic ---

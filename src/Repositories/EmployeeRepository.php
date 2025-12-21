@@ -3,6 +3,7 @@
 namespace Src\Repositories;
 
 use Src\Core\Database;
+use Src\Core\Logger;
 use Src\Models\Employee;
 use Src\Mappers\EmployeeMapper;
 use PDO;
@@ -29,6 +30,10 @@ class EmployeeRepository
 			':street' => $employee->street,
 			':zipCode' => $employee->zipCode,
 		]);
+		Logger::info("Employee saved", [
+			'first_name' => $employee->firstName,
+			'last_name' => $employee->lastName
+		]);
 	}
 
 	public function update(Employee $employee): void
@@ -46,12 +51,14 @@ class EmployeeRepository
 			':street' => $employee->street,
 			':zipCode' => $employee->zipCode,
 		]);
+		Logger::info("Employee updated", ['employee_id' => $employee->id]);
 	}
 
 	public function delete(int $id): void
 	{
 		$stmt = $this->db->prepare("DELETE FROM Employees WHERE EmployeeID = :id");
 		$stmt->execute([':id' => $id]);
+		Logger::info("Employee deleted", ['employee_id' => $id]);
 	}
 
 	public function findAll(): array
@@ -68,6 +75,11 @@ class EmployeeRepository
 		$stmt->execute([':id' => $id]);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+		if (!$row) {
+			Logger::info("Employee not found", ['employee_id' => $id]);
+			return null;
+		}
+		Logger::debug("Employee found", ['employee_id' => $id]);
 		return $row ? EmployeeMapper::fromDBRow($row) : null;
 	}
 }

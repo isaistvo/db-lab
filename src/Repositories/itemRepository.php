@@ -3,6 +3,7 @@
 namespace Src\Repositories;
 
 use Src\Core\Database;
+use Src\Core\Logger;
 use Src\Models\Item;
 use Src\Mappers\ItemMapper;
 use PDO;
@@ -51,6 +52,7 @@ class ItemRepository
          ':qty' => $item->quantity,
          ':guar' => $item->guarantee
      ]);
+	 Logger::info("Item saved", ['name' => $item->name]);
  }
 
  public function update(Item $item): void
@@ -63,12 +65,14 @@ class ItemRepository
          ':qty' => $item->quantity,
          ':guar' => $item->guarantee
      ]);
+	 Logger::info("Item updated", ['item_id' => $item->id]);
  }
 
 	public function delete(int $id): void
 	{
 		$stmt = $this->db->prepare("DELETE FROM Items WHERE ProductID = :id");
 		$stmt->execute([':id' => $id]);
+		Logger::info("Item deleted", ['item_id' => $id]);
 	}
 
 	public function findAll(): array
@@ -82,6 +86,11 @@ class ItemRepository
 		$stmt = $this->db->prepare("SELECT * FROM Items WHERE ProductID = :id LIMIT 1");
 		$stmt->execute([':id' => $id]);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		if (!$row) {
+			Logger::info("Item not found", ['item_id' => $id]);
+			return null;
+		}
+		Logger::debug("Item found", ['item_id' => $id]);
 		return $row ? ItemMapper::fromDBRow($row) : null;
 	}
 }

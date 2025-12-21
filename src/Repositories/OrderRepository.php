@@ -4,6 +4,7 @@ namespace Src\Repositories;
 
 use PDO;
 use Src\Core\Database;
+use Src\Core\Logger;
 use Src\Mappers\OrderMapper;
 use Src\Models\Order;
 
@@ -30,6 +31,7 @@ class OrderRepository
             ':shipZip'    => $order->shipZip,
             ':shipDate'   => $order->shipDate?->format('Y-m-d'),
         ]);
+		Logger::info("Order saved", ['customer_id' => $order->customerId]);
     }
 
     public function update(Order $order): void
@@ -53,12 +55,14 @@ class OrderRepository
             ':shipZip'    => $order->shipZip,
             ':shipDate'   => $order->shipDate?->format('Y-m-d'),
         ]);
+		Logger::info("Order updated", ['order_id' => $order->id]);
     }
 
     public function delete(int $id): void
     {
         $stmt = $this->db->prepare("DELETE FROM orders WHERE OrderID = :id");
         $stmt->execute([':id' => $id]);
+		Logger::info("Order deleted", ['order_id' => $id]);
     }
 
     public function findAll(): array
@@ -72,6 +76,11 @@ class OrderRepository
         $stmt = $this->db->prepare("SELECT * FROM orders WHERE OrderID = :id LIMIT 1");
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+		if (!$row) {
+			Logger::info("Order not found", ['order_id' => $id]);
+			return null;
+		}
+		Logger::debug("Order found", ['order_id' => $id]);
         return $row ? OrderMapper::fromDBRow($row) : null;
     }
 }

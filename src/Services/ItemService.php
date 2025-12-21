@@ -7,6 +7,7 @@ use Src\DTO\CreateItemDTO;
 use Src\DTO\UpdateItemDTO;
 use Src\Mappers\ItemMapper;
 use Src\Models\Item;
+use Src\Core\Logger;
 
 class ItemService
 {
@@ -40,6 +41,11 @@ class ItemService
      }
      $item = ItemMapper::fromCreateDTO($dto);
      $this->repository->save($item);
+     Logger::info("Item created", [
+         'name' => $dto->name,
+         'price' => $dto->price,
+         'quantity' => $dto->quantity
+     ]);
  }
 
 	public function updateItem(int $id, UpdateItemDTO $dto): void
@@ -58,11 +64,13 @@ class ItemService
         }
         $item = ItemMapper::fromUpdateDTO($dto);
         $this->repository->update($item);
+        Logger::info("Item updated", ['item_id' => $id]);
     }
 
 	public function deleteItem(int $id): void
 	{
 		// Тут можна додати перевірку: не видаляти, якщо товар є в замовленнях
 		$this->repository->delete($id);
+		Logger::info("Item deleted", ['item_id' => $id]);
 	}
 }

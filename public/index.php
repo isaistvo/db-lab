@@ -6,6 +6,7 @@ use Src\Core\View;
 use Src\Handlers\CustomerHandler;
 use Src\Core\Config;
 use Src\Core\Database;
+use Src\Core\Logger;
 use Src\Handlers\EmployeeHandler;
 use Src\Handlers\ItemHandler;
 use Src\Handlers\OrderHandler;
@@ -22,6 +23,8 @@ try {
 	Database::getInstance($dbConfig);
 
 $route = $_GET['r'] ?? 'home';
+
+Logger::info("Route accessed", ['route' => $route]);
 
 $customerHandler = new CustomerHandler();
 $employeeHandler = new EmployeeHandler();
@@ -168,7 +171,12 @@ $orderHandler = new OrderHandler();
 	}
 
 } catch (\Throwable $e) {
-	error_log("Critical Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+	Logger::critical("Critical error in main application", [
+		'error' => $e->getMessage(),
+		'file' => $e->getFile(),
+		'line' => $e->getLine(),
+		'trace' => $e->getTraceAsString()
+	]);
 
 	http_response_code(500);
 	echo "<h1>500 Internal Server Error</h1>";

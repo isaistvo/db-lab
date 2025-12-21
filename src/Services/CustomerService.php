@@ -7,6 +7,7 @@ use Src\DTO\CreateCustomerDTO;
 use Src\DTO\UpdateCustomerDTO;
 use Src\Mappers\CustomerMapper;
 use Src\Models\Customer;
+use Src\Core\Logger;
 
 class CustomerService
 {
@@ -24,6 +25,10 @@ class CustomerService
         }
         $customer = CustomerMapper::fromCreateDTO($input);
         $this->repository->save($customer);
+		Logger::info("Customer created", [
+			'first_name' => $input->firstName,
+			'last_name' => $input->lastName
+		]);
     }
 
     /**
@@ -53,6 +58,7 @@ class CustomerService
 	    $updatedCustomer = CustomerMapper::fromUpdateDTO($input);
 
         $this->repository->update($updatedCustomer);
+		Logger::info("Customer updated", ['customer_id' => $id]);
     }
 
     public function deleteCustomer(int $id): void
@@ -63,5 +69,6 @@ class CustomerService
             throw new \RuntimeException('Customer not found');
         }
         $this->repository->delete($id);
+		Logger::info("Customer deleted", ['customer_id' => $id]);
     }
 }

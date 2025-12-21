@@ -6,6 +6,7 @@ namespace Src\Handlers;
 
 use Src\Services\EmployeeService;
 use Src\Core\View;
+use Src\Core\Logger;
 use Src\DTO\CreateEmployeeDTO;
 use Src\DTO\UpdateEmployeeDTO;
 use Src\Models\Employee;
@@ -35,6 +36,7 @@ class EmployeeHandler
 				'message' => $message,
 			]);
 		} catch (\Throwable $e) {
+			Logger::error("Failed to load employee list", ['error' => $e->getMessage()]);
 			View::render('employees/index', ['employees' => [], 'error' => $e->getMessage()]);
 		}
 	}
@@ -76,9 +78,17 @@ class EmployeeHandler
 		try {
 			$dto = CreateEmployeeDTO::fromArray($_POST);
 			$this->service->createEmployee($dto);
+			Logger::info("Employee created via handler", [
+				'first_name' => $dto->firstName,
+				'last_name' => $dto->lastName
+			]);
 			header('Location: ' . self::BASE_URL . '?r=employee/create&success=1');
 			exit;
 		} catch (\Throwable $e) {
+			Logger::error("Failed to create employee via handler", [
+				'error' => $e->getMessage(),
+				'input' => $_POST
+			]);
 			View::render('employees/create', ['error' => $e->getMessage(), 'form' => $_POST]);
 		}
 	}
@@ -105,9 +115,15 @@ class EmployeeHandler
 			$dto = UpdateEmployeeDTO::fromArray($_POST);
 			$dto->id = $id;
 			$this->service->updateEmployee($id, $dto);
+			Logger::info("Employee updated via handler", ['id' => $id]);
 			header('Location: ' . self::BASE_URL . '?r=employee/index&updated=1');
 			exit;
 		} catch (\Throwable $e) {
+			Logger::error("Failed to update employee via handler", [
+				'error' => $e->getMessage(),
+				'id' => $id,
+				'input' => $_POST
+			]);
 			$formData = $_POST;
 			$formData['id'] = $id;
 			View::render('employees/edit', ['error' => $e->getMessage(), 'form' => $formData]);
@@ -118,9 +134,14 @@ class EmployeeHandler
 	{
 		try {
 			$this->service->deleteEmployee($id);
+			Logger::info("Employee deleted via handler", ['id' => $id]);
 			header('Location: ' . self::BASE_URL . '?r=employee/index&deleted=1');
 			exit;
 		} catch (\PDOException $e) {
+			Logger::error("Failed to delete employee via handler", [
+				'error' => $e->getMessage(),
+				'id' => $id
+			]);
 			if ($e->getCode() === '23000') {
 				$errorMessage = 'Неможливо видалити співробітника: у нього є активні замовлення. Спочатку видаліть або перепризначте ці замовлення.';
 			} else {
@@ -136,6 +157,10 @@ class EmployeeHandler
 			]);
 
 		} catch (\Throwable $e) {
+			Logger::error("Failed to delete employee via handler", [
+				'error' => $e->getMessage(),
+				'id' => $id
+			]);
 			$list = [];
 			try {
 				$list = $this->service->getAll();

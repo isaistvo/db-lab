@@ -4,6 +4,7 @@ namespace Src\Repositories;
 
 use PDO;
 use Src\Core\Database;
+use Src\Core\Logger;
 use Src\Models\Customer;
 use Src\Mappers\CustomerMapper;
 
@@ -25,8 +26,10 @@ class CustomerRepository
 		$row = $stmt->fetch();
 
 		if (!$row) {
+			Logger::info("Customer not found", ['customer_id' => $id]);
 			return null;
 		}
+		Logger::debug("Customer found", ['customer_id' => $id]);
         return CustomerMapper::fromDBRow($row);
     }
 
@@ -66,6 +69,10 @@ class CustomerRepository
             'street' => $customer->street,
             'zip' => $customer->zipCode,
         ]);
+		Logger::info("Customer saved", [
+			'first_name' => $customer->firstName,
+			'last_name' => $customer->lastName
+		]);
     }
 
     public function update(Customer $customer): void
@@ -82,12 +89,14 @@ class CustomerRepository
             'zip' => $customer->zipCode,
             'id' => $customer->id,
         ]);
+		Logger::info("Customer updated", ['customer_id' => $customer->id]);
     }
 
     public function delete(int $id): void
     {
         $stmt = $this->db->prepare("DELETE FROM customer WHERE CustomerID = :id");
         $stmt->execute(['id' => $id]);
+		Logger::info("Customer deleted", ['customer_id' => $id]);
     }
 
 }

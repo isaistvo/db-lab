@@ -7,6 +7,7 @@ use Src\DTO\CreateEmployeeDTO;
 use Src\DTO\UpdateEmployeeDTO;
 use Src\Mappers\EmployeeMapper;
 use Src\Models\Employee;
+use Src\Core\Logger;
 
 class EmployeeService
 {
@@ -34,6 +35,10 @@ class EmployeeService
 		}
 		$employee = EmployeeMapper::fromCreateDTO($dto);
 		$this->repository->save($employee);
+		Logger::info("Employee created", [
+			'first_name' => $dto->firstName,
+			'last_name' => $dto->lastName
+		]);
 	}
 
 	public function updateEmployee(int $id, UpdateEmployeeDTO $dto): void
@@ -47,6 +52,7 @@ class EmployeeService
 		}
 		$updated = EmployeeMapper::fromUpdateDTO($dto);
 		$this->repository->update($updated);
+		Logger::info("Employee updated", ['employee_id' => $id]);
 	}
 
 	public function deleteEmployee(int $id): void
@@ -56,5 +62,6 @@ class EmployeeService
 			throw new \RuntimeException('Співробітника не знайдено');
 		}
 		$this->repository->delete($id);
+		Logger::info("Employee deleted", ['employee_id' => $id]);
 	}
 }

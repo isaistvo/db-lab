@@ -6,6 +6,7 @@ namespace Src\Handlers;
 
 use Src\Services\CustomerService;
 use Src\Core\View;
+use Src\Core\Logger;
 use Src\DTO\CreateCustomerDTO;
 use Src\DTO\UpdateCustomerDTO;
 use Src\Models\Customer;
@@ -44,6 +45,7 @@ class CustomerHandler
 				'message'   => $message,
 			]);
 		} catch (\Throwable $e) {
+			Logger::error("Failed to load customer list", ['error' => $e->getMessage()]);
 			View::render('customers/index', [
 				'customers' => [],
 				'error'     => 'Помилка завантаження списку: ' . $e->getMessage()
@@ -78,9 +80,18 @@ class CustomerHandler
 			$dto = CreateCustomerDTO::fromArray($_POST);
 			$this->service->createCustomer($dto);
 
+			Logger::info("Customer created via handler", [
+				'first_name' => $dto->firstName,
+				'last_name' => $dto->lastName
+			]);
+
 			header('Location: ' . self::BASE_URL . '?r=customer/create&success=1');
 			exit;
 		} catch (\Throwable $e) {
+			Logger::error("Failed to create customer via handler", [
+				'error' => $e->getMessage(),
+				'input' => $_POST
+			]);
 			// У разі помилки повертаємо введені дані назад у форму
 			View::render('customers/create', [
 				'error' => 'Помилка: ' . $e->getMessage(),
