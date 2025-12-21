@@ -5,38 +5,47 @@ namespace Src\Core;
 use PDO;
 use PDOException;
 
-class Database
+final class Database
 {
-    private static ?Database $instance = null;
-    private PDO $connection;
+	private static ?Database $instance = null;
+	private PDO $connection;
 
-    private function __construct()
-    {
-        // Простий парсинг .env для прикладу
-        $env = parse_ini_file(__DIR__ . '/../../.env');
+	private function __construct(array $config)
+	{
+		$dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
 
-        $dsn = "mysql:host={$env['DB_HOST']};dbname={$env['DB_NAME']};charset={$env['DB_CHARSET']}";
+		try {
+			$this->connection = new PDO($dsn, $config['user'], $config['password']);
 
-        try {
-            $this->connection = new PDO($dsn, $env['DB_USER'], $env['DB_PASS']);
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        } catch (PDOException $e) {
-            die("Database connection error: " . $e->getMessage());
-        }
-    }
+			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+			$this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-    public static function getInstance(): Database
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+		} catch (PDOException $e) {
+			throw new PDOException("Помилка підключення до БД: " . $e->getMessage(), (int)$e->getCode());
+		}
+	}
 
-    public function getConnection(): PDO
-    {
-        return $this->connection;
-    }
+	public static function getInstance(?array $config = null): Database
+	{
+		if (self::$instance === null) {
+			if ($config === null) {
+				throw new \RuntimeException("База даних не ініціалізована. Передайте конфігурацію при першому виклику.");
+			}
+			self::$instance = new self($config);
+		}
+		return self::$instance;
+	}
+
+	public function getConnection(): PDO
+	{
+		return $this->connection;
+	}
+
+	private function __clone() {}
+
+	public function __wakeup()
+	{
+		throw new \Exception("Cannot unserialize a singleton.");
+	}
 }

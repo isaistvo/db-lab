@@ -2,26 +2,57 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title><?= $title ?? 'Мій сайт' ?></title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        nav { border-bottom: 1px solid #ccc; margin-bottom: 20px; }
-        footer { margin-top: 50px; color: gray; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $title ?? 'Виделка' ?></title>
+
+    <link rel="stylesheet" href="/db-lab/public/css/style.css">
 </head>
 <body>
 
-<nav>
-    <a href="/">Головна</a> | <a href="/customer/create">Створити клієнта</a>
-</nav>
+<div class="container">
+    <nav>
+        <strong>Панель керування</strong>
+        <span style="margin-left: auto; font-size: 0.9em; color: #6b7280;">
+            </span>
+    </nav>
 
-<main>
-	<?= $content ?>
-</main>
+    <div class="content-wrapper">
 
-<footer>
-    &copy; 2025 Мій Проект
-</footer>
+        <aside class="sidebar">
+            <h3>Меню</h3>
+            <ul class="nav-menu">
+                <li>
+                    <a href="/db-lab/public/index.php?r=customer/index">
+                        Клієнти
+                    </a>
+                </li>
+                <li>
+                    <a href="/db-lab/public/index.php?r=employee/index">
+                        Співробітники
+                    </a>
+                </li>
+                <li>
+                    <a href="/db-lab/public/index.php?r=item/index">
+                        Товари
+                    </a>
+                </li>
+                <li>
+                    <a href="/db-lab/public/index.php?r=order/index">
+                        Замовлення
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main>
+			<?= $content ?>
+        </main>
+    </div>
+
+    <footer>
+        &copy; <?= date('Y') ?> ІС "Виделка"
+    </footer>
+</div>
 
 </body>
 </html>

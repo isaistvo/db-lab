@@ -1,0 +1,434 @@
+:root {
+    --primary-color: #fab760;
+    --primary-hover: #e09e45;
+    --bg-color: #191b20;
+    --card-bg: #22272c;
+    --text-color: #e5e7eb;
+    --text-muted: #9ca3af;
+    --hover-bg: #374151;
+    --border-color: #4b5563;
+    --danger-bg: #4a3418;
+    --danger-border: #877d45;
+    --danger-text: #fcd6a5;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
+    overflow-x: hidden; /* Защита от горизонтального скролла всей страницы */
+}
+
+/* --- Layout Container --- */
+.container {
+    width: 100%;       /* Полная ширина */
+    max-width: 100%;   /* Убираем ограничение в пикселях */
+    box-sizing: border-box; /* Учитываем padding в ширине */
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Top Navigation --- */
+nav {
+    background: var(--card-bg);
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* --- Content Wrapper --- */
+.content-wrapper {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    align-items: flex-start;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 260px; /* Чуть уменьшил для компактности */
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0; /* Запрещаем сжиматься */
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.1em;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- Sidebar Menu --- */
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-menu li {
+    margin-bottom: 8px;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.nav-menu a:hover {
+    background-color: var(--hover-bg);
+    color: #fff;
+    transform: translateX(4px);
+}
+
+/* --- Main Content Area --- */
+main {
+    background: var(--card-bg);
+    padding: 30px; /* Чуть меньше отступы внутри для экономии места */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    flex: 1;
+
+    /* !!! ВАЖНО ДЛЯ ТАБЛИЦ !!! */
+    min-width: 0; /* Позволяет flex-элементу сжиматься, если контент внутри слишком широкий */
+    overflow: hidden; /* Обрезает лишнее, заставляя работать внутренний скролл таблицы */
+}
+
+/* --- Page Header --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    color: var(--text-color);
+}
+
+/* --- Table Responsiveness --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; /* Горизонтальный скролл ТОЛЬКО если таблица не влезает */
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+
+    /* Стили скроллбара (для Webkit) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--card-bg);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    background: transparent;
+    border: none;
+    white-space: nowrap; /* Заставляет таблицу растягиваться по контенту */
+}
+
+.table thead th {
+    background-color: rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-align: left;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* --- Forms --- */
+.form-card {
+    width: 100%;
+    max-width: 600px; /* Формы не должны быть на весь экран */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    font-size: 16px;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(250, 183, 96, 0.15);
+}
+
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    font-size: 16px;
+    cursor: pointer;
+    appearance: none; /* Remove default arrow */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    padding-right: 45px; /* Space for custom arrow */
+}
+
+.form-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(250, 183, 96, 0.15);
+}
+
+.form-group select option {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 8px;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-block;
+    padding: 8px 14px;
+    color: var(--text-color);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: var(--hover-bg);
+}
+
+.btn-primary, .btn-submit {
+    background-color: var(--primary-color);
+    color: #111;
+    border: 1px solid var(--primary-color);
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover, .btn-submit:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(250, 183, 96, 0.2);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-muted);
+    border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+    color: var(--text-color);      /* Текст стає білішим */
+    border-color: var(--text-muted);
+    background-color: var(--hover-bg);
+}
+/* --- Icons & Helpers --- */
+.btn-sm {
+    padding: 0;
+    font-size: 1.1em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    width: 34px;
+    border: 1px solid transparent;
+}
+
+.btn-icon:hover {
+    background-color: rgba(255,255,255, 0.1);
+    border-color: var(--border-color);
+}
+
+.btn-danger { color: #fecaca; }
+.btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+
+.action-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    align-items: center;
+}
+
+/* --- Footer --- */
+footer {
+    margin-top: auto;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 20px 0;
+}
+
+/* --- Utilities --- */
+.text-muted { color: var(--text-muted); }
+.font-bold { font-weight: 600; }
+.text-right { text-align: right; }
+.id-badge { font-family: monospace; opacity: 0.7; }
+.badge {
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+.alert {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+}
+.alert-success { background: rgba(16, 185, 129, 0.15); color: #a7f3d0; }
+.alert-error { background: rgba(239, 68, 68, 0.15); color: #fecaca; }
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: all 0.2s ease;
+}
+
+.back-link:hover {
+    color: var(--primary-color);
+    transform: translateX(-4px);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.form-actions .btn-submit {
+    margin-top: 0;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* ===== Orders > Show (page specific) ===== */
+.page-order-show .multi-add-card {
+    overflow-x: visible;
+}
+.page-order-show .multi-add-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.page-order-show .multi-add-table th:nth-child(1),
+.page-order-show .multi-add-table td:nth-child(1) {
+    white-space: normal;
+    word-break: break-word;
+}
+.page-order-show .multi-add-table th:nth-child(2),
+.page-order-show .multi-add-table td:nth-child(2) {
+    white-space: nowrap;
+    text-align: right;
+}
+.page-order-show .multi-add-table th:nth-child(3),
+.page-order-show .multi-add-table td:nth-child(3) {
+    text-align: right;
+}
+.page-order-show .qty-input {
+    width: 90px;
+    text-align: right;
+}
+.page-order-show .multi-add-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.page-order-show .multi-add-actions .muted {
+    margin-top: 4px;
+}
+@media (max-width: 1280px) {
+    .page-order-show .sidebar { width: 220px; }
+    .page-order-show .multi-add-card { padding: 12px; }
+}
+@media (max-width: 1024px) {
+    .page-order-show .sidebar { width: 200px; }
+    .page-order-show .multi-add-actions .muted { flex-basis: 100%; }
+}
