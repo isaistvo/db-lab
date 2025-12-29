@@ -51,6 +51,12 @@ class OrderHandler
 
     public function show(int $id): void
     {
+        if ($id <= 0) {
+            http_response_code(404);
+            View::render('orders/index', ['orders' => [], 'error' => 'Некоректний ID']);
+            return;
+        }
+
         try {
             $order = $this->service->getById($id);
             if (!$order) {
@@ -62,9 +68,9 @@ class OrderHandler
                 return;
             }
 
-            // Fetch inventory info for this order (line items and totals)
+            
             $inventory = $this->service->getOrderInventory($id);
-            // Fetch all products for the add-item selector
+            
             $allItems = $this->service->getAllItems();
 
             View::render('orders/show', [
@@ -175,20 +181,40 @@ class OrderHandler
         }
     }
 
-    // --- Items management endpoints ---
+    
     public function addItem(int $id): void
     {
         try {
             $productId = (int)($_POST['product_id'] ?? 0);
             $quantity = (int)($_POST['quantity'] ?? 0);
             $soldPrice = (float)($_POST['sold_price'] ?? 0);
+
+            
+            $errors = [];
+            if ($id <= 0) {
+                $errors[] = 'ID замовлення має бути додатним числом';
+            }
+            if ($productId <= 0) {
+                $errors[] = 'ID товару має бути додатним числом';
+            }
+            if ($quantity <= 0) {
+                $errors[] = 'Кількість має бути більше 0';
+            }
+            if ($soldPrice <= 0) {
+                $errors[] = 'Ціна продажу має бути більше 0';
+            }
+
+            if (!empty($errors)) {
+                throw new \InvalidArgumentException(implode('; ', $errors));
+            }
+
             $this->service->upsertItem($id, $productId, $quantity, $soldPrice);
             header('Location: ' . self::BASE_URL . '?r=order/show&id=' . $id . '&item_added=1');
             exit;
         } catch (\Throwable $e) {
 	        error_log('[addItem] ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
 	        error_log($e->getTraceAsString());
-            // Re-render show with error
+            
             try {
                 $order = $this->service->getById($id);
                 $inventory = $this->service->getOrderInventory($id);
@@ -279,3 +305,5 @@ class OrderHandler
         }
     }
 }
+
+

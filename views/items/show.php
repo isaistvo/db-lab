@@ -1,9 +1,5 @@
 <?php
-/**
- * Expected variables:
- * - Src\Models\Item $item
- * - string|null $error (optional)
- */
+
 ?>
 
 <div class="form-card">
@@ -31,3 +27,4 @@
         <a href="/db-lab/public/index.php?r=item/index" class="btn">Повернутися</a>
     <?php endif; ?>
 </div>
+

@@ -2,6 +2,8 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+session_start();
+
 use Src\Core\View;
 use Src\Handlers\CustomerHandler;
 use Src\Core\Config;
@@ -10,19 +12,25 @@ use Src\Core\Logger;
 use Src\Handlers\EmployeeHandler;
 use Src\Handlers\ItemHandler;
 use Src\Handlers\OrderHandler;
+use Src\Handlers\AuthHandler;
 
 try {
 	$config = new Config(__DIR__ . '/../.env');
-	$dbConfig = [
-		'host'     => $config->get('DB_HOST'),
-		'dbname'   => $config->get('DB_NAME'),
-		'user'     => $config->get('DB_USER'),
-		'password' => $config->get('DB_PASS'),
-		'charset'  => $config->get('DB_CHARSET', 'utf8mb4'),
-	];
+	
+	
+	$userRole = $_SESSION['role'] ?? null;
+	$dbConfig = $config->getDbConfigForRole($userRole);
+	
 	Database::getInstance($dbConfig);
 
 $route = $_GET['r'] ?? 'home';
+
+
+if (!preg_match('/^[a-zA-Z0-9\/_-]+$/', $route)) {
+    http_response_code(400);
+    echo 'Некоректний маршрут';
+    exit;
+}
 
 Logger::info("Route accessed", ['route' => $route]);
 
@@ -30,9 +38,53 @@ $customerHandler = new CustomerHandler();
 $employeeHandler = new EmployeeHandler();
 $itemHandler = new ItemHandler();
 $orderHandler = new OrderHandler();
-// 4. Маршрутизація
+$authHandler = new AuthHandler();
+
+
+
+$publicRoutes = ['auth/login', 'auth/authenticate', 'auth/register', 'auth/store'];
+if (!isset($_SESSION['user_id']) && !in_array($route, $publicRoutes)) {
+    header('Location: /db-lab/public/index.php?r=auth/login');
+    exit;
+}
+
+
+$userRole = $_SESSION['role'] ?? null;
+$rolePermissions = [
+    'admin' => ['customer', 'employee', 'item', 'order', 'home', 'auth'],
+    'employee' => ['customer', 'item', 'order', 'home', 'auth'],
+    'customer' => ['item', 'home', 'auth']
+];
+
+if (isset($_SESSION['user_id']) && $userRole && !in_array($route, $publicRoutes)) {
+    $routePrefix = explode('/', $route)[0];
+    if (!in_array($routePrefix, $rolePermissions[$userRole] ?? [])) {
+        http_response_code(403);
+        echo "<h1>403 Forbidden</h1>";
+        echo "<p>У вас немає доступу до цієї сторінки.</p>";
+        echo "<a href='/db-lab/public/index.php?r=home'>Повернутися на головну</a>";
+        exit;
+    }
+}
+
 		switch ($route) {
-		// --- READ (Перегляд) ---
+		
+		case 'auth/login':
+			$authHandler->login();
+			break;
+		case 'auth/register':
+			$authHandler->register();
+			break;
+		case 'auth/authenticate':
+			$authHandler->authenticate();
+			break;
+		case 'auth/store':
+			$authHandler->store();
+			break;
+		case 'auth/logout':
+			$authHandler->logout();
+			break;
+		
 		case 'customer/index':
 			$customerHandler->index();
 			break;
@@ -42,7 +94,7 @@ $orderHandler = new OrderHandler();
 			$customerHandler->show($id);
 			break;
 
-		// --- CREATE (Створення) ---
+		
 		case 'customer/create':
 			$customerHandler->create();
 			break;
@@ -51,7 +103,7 @@ $orderHandler = new OrderHandler();
 			$customerHandler->store();
 			break;
 
-		// --- UPDATE (Редагування) ---
+		
 		case 'customer/edit':
 			$id = (int)($_GET['id'] ?? 0);
 			$customerHandler->edit($id);
@@ -62,13 +114,13 @@ $orderHandler = new OrderHandler();
 			$customerHandler->update($id);
 			break;
 
-		// --- DELETE (Видалення) ---
+		
 		case 'customer/destroy':
 			$id = (int)($_GET['id'] ?? ($_POST['id'] ?? 0));
 			$customerHandler->destroy($id);
 			break;
 
-		// --- EMPLOYEES ---
+		
 		case 'employee/index':
 			$employeeHandler->index();
 			break;
@@ -95,7 +147,7 @@ $orderHandler = new OrderHandler();
 			$employeeHandler->destroy($id);
 			break;
 
-  // --- ITEMS ---
+  
 		case 'item/index':
 			$itemHandler->index();
 			break;
@@ -122,7 +174,7 @@ $orderHandler = new OrderHandler();
 			$itemHandler->destroy($id);
 			break;
 
-		// --- ORDERS ---
+		
 		case 'order/index':
 			$orderHandler->index();
 			break;
@@ -161,7 +213,7 @@ $orderHandler = new OrderHandler();
 			$orderHandler->removeItem($id);
 			break;
 
-		// --- HOME / DEFAULT ---
+		
 		case 'home':
 		default:
 			View::render('home', [

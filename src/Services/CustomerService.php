@@ -31,9 +31,7 @@ class CustomerService
 		]);
     }
 
-    /**
-     * @return Customer[]
-     */
+    
     public function getAll(): array
     {
         return $this->repository->findAll();
@@ -63,7 +61,7 @@ class CustomerService
 
     public function deleteCustomer(int $id): void
     {
-        // Ensure exists (optional but improves error handling)
+        
         $existing = $this->repository->findById($id);
         if (!$existing) {
             throw new \RuntimeException('Customer not found');
@@ -72,3 +70,5 @@ class CustomerService
 		Logger::info("Customer deleted", ['customer_id' => $id]);
     }
 }
+
+

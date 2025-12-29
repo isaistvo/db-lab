@@ -1,11 +1,5 @@
 <?php
-/**
- * Passive view for creating an item
- * Expected variables:
- * - array $form (optional)
- * - string|null $message
- * - string|null $error
- */
+
 ?>
 
 <div class="form-card">
@@ -41,3 +35,4 @@
         <a href="/db-lab/public/index.php?r=item/index" class="btn" style="margin-left:8px;">До списку</a>
     </form>
 </div>
+

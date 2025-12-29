@@ -43,6 +43,12 @@ class EmployeeHandler
 
   public function show(int $id): void
   {
+      if ($id <= 0) {
+          http_response_code(404);
+          View::render('employees/index', ['employees' => [], 'error' => 'Некоректний ID']);
+          return;
+      }
+
       try {
           $employee = $this->service->getById($id);
           if (!$employee) {
@@ -174,3 +180,5 @@ class EmployeeHandler
 		}
 	}
 }
+
+

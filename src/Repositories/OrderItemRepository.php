@@ -47,7 +47,7 @@ class OrderItemRepository
 
     public function upsert(OrderItem $item): void
     {
-        // Uses unique (OrderID, ProductID)
+        
         $stmt = $this->db->prepare(
             "INSERT INTO orderitems (OrderID, ProductID, Quantity, SoldPrice)
              VALUES (:orderId, :productId, :quantity, :soldPrice)
@@ -90,9 +90,7 @@ class OrderItemRepository
         $stmt->execute([':orderId' => $orderId]);
     }
 
-    /**
-     * @return OrderItem[]
-     */
+    
     public function findByOrder(int $orderId): array
     {
         $stmt = $this->db->prepare("SELECT * FROM orderitems WHERE OrderID = :orderId ORDER BY ID ASC");
@@ -101,3 +99,5 @@ class OrderItemRepository
         return array_map(fn($row) => OrderItemMapper::fromDBRow($row), $rows);
     }
 }
+
+

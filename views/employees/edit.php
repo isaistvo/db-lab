@@ -1,10 +1,5 @@
 <?php
-/**
- * Passive view for editing an employee
- * Expected variables:
- * - array $form with keys: id, firstName, lastName, city, street, zipCode
- * - string|null $error
- */
+
 ?>
 
 <div class="form-card">
@@ -45,3 +40,4 @@
         </form>
     <?php endif; ?>
 </div>
+

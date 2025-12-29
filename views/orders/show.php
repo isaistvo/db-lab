@@ -124,15 +124,15 @@
       if (section.style.display === 'none' || section.style.display === '') {
         section.style.display = 'block';
       } else {
-        // keep visible if already open
+        
       }
       try { section.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch(_) {}
     }
-    // Default collapsed every visit. If user uses #add-items directly, open it.
+    
     if (location.hash === '#add-items') {
       showSection();
     }
-    // Attach click handlers to any link targeting #add-items
+    
     var triggers = document.querySelectorAll('a[href="#add-items"]');
     for (var i = 0; i < triggers.length; i++) {
       triggers[i].addEventListener('click', function(e){
@@ -142,3 +142,4 @@
     }
   })();
 </script>
+

@@ -33,25 +33,20 @@ class CustomerRepository
         return CustomerMapper::fromDBRow($row);
     }
 
-    /**
-     * New alias per requirements: findAll()
-     * @return Customer[]
-     */
+    
     public function findAll(): array
     {
         return $this->getAll();
     }
 
-    /**
-     * @return Customer[]
-     */
+    
     public function getAll(): array
     {
         $sql = "SELECT * FROM customer ORDER BY CustomerID DESC";
         $stmt = $this->db->query($sql);
         $customers = [];
         while ($row = $stmt->fetch()) {
-            // Используем маппер для каждой строки
+            
             $customers[] = CustomerMapper::fromDBRow($row);
         }
         return $customers;
@@ -100,3 +95,5 @@ class CustomerRepository
     }
 
 }
+
+

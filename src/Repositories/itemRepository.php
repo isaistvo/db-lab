@@ -17,13 +17,11 @@ class ItemRepository
 		$this->db = Database::getInstance()->getConnection();
  }
 
- /**
-  * Atomically decreases stock if available. Returns true on success, false if insufficient stock.
-  */
+ 
  public function decreaseStock(int $productId, int $by): bool
  {
      if ($by <= 0) { return true; }
-     // Use distinct named parameters to avoid HY093 with native prepares
+     
      $stmt = $this->db->prepare(
          "UPDATE Items
           SET Quantity = Quantity - :byDec
@@ -33,9 +31,7 @@ class ItemRepository
      return $stmt->rowCount() > 0;
  }
 
- /**
-  * Increases stock by given amount (can be used to revert or on item removal from order).
-  */
+ 
  public function increaseStock(int $productId, int $by): void
  {
      if ($by <= 0) { return; }
@@ -94,3 +90,5 @@ class ItemRepository
 		return $row ? ItemMapper::fromDBRow($row) : null;
 	}
 }
+
+

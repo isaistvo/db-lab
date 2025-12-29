@@ -1,5 +1,5 @@
 <?php
-/** @var array $employees */
+
 ?>
 
 <div>

@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace Src\DTO;
 
-/**
- * DTO used for updating an existing Customer
- */
+
 class UpdateCustomerDTO
 {
     public int $id;
@@ -31,18 +29,59 @@ class UpdateCustomerDTO
         $this->zipCode = $zipCode !== '' ? $zipCode : null;
     }
 
-    /**
-     * Build DTO from array (e.g., $_POST)
-     */
+    
     public static function fromArray(array $data): self
     {
+        $id = (int)($data['id'] ?? 0);
+        $firstName = trim((string)($data['firstName'] ?? ''));
+        $lastName = trim((string)($data['lastName'] ?? ''));
+        $city = isset($data['city']) ? trim((string)$data['city']) : null;
+        $street = isset($data['street']) ? trim((string)$data['street']) : null;
+        $zipCode = isset($data['zipCode']) ? trim((string)$data['zipCode']) : null;
+
+        
+        $errors = [];
+        if ($id <= 0) {
+            $errors[] = 'ID має бути додатним числом';
+        }
+
+        if (empty($firstName)) {
+            $errors[] = 'Ім\'я обов\'язкове';
+        } elseif (strlen($firstName) > 100) {
+            $errors[] = 'Ім\'я має містити не більше 100 символів';
+        }
+
+        if (empty($lastName)) {
+            $errors[] = 'Прізвище обов\'язкове';
+        } elseif (strlen($lastName) > 100) {
+            $errors[] = 'Прізвище має містити не більше 100 символів';
+        }
+
+        if ($city !== null && strlen($city) > 100) {
+            $errors[] = 'Місто має містити не більше 100 символів';
+        }
+
+        if ($street !== null && strlen($street) > 255) {
+            $errors[] = 'Вулиця має містити не більше 255 символів';
+        }
+
+        if ($zipCode !== null && !preg_match('/^\d{5}$/', $zipCode)) {
+            $errors[] = 'Поштовий індекс має бути 5 цифр';
+        }
+
+        if (!empty($errors)) {
+            throw new \InvalidArgumentException(implode('; ', $errors));
+        }
+
         return new self(
-            (int)($data['id'] ?? 0),
-            trim((string)($data['firstName'] ?? '')),
-            trim((string)($data['lastName'] ?? '')),
-            isset($data['city']) ? trim((string)$data['city']) : null,
-            isset($data['street']) ? trim((string)$data['street']) : null,
-            isset($data['zipCode']) ? trim((string)$data['zipCode']) : null
+            $id,
+            $firstName,
+            $lastName,
+            $city,
+            $street,
+            $zipCode
         );
     }
 }
+
+

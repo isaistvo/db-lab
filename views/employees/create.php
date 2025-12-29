@@ -1,11 +1,5 @@
 <?php
-/**
- * Passive view for creating an employee
- * Expected variables:
- * - array $form (optional) — previously submitted values
- * - string|null $message — success message
- * - string|null $error — error message
- */
+
 ?>
 
 <div class="form-card">
@@ -45,3 +39,4 @@
         <a href="/db-lab/public/index.php?r=employee/index" class="btn" style="margin-left:8px;">До списку</a>
     </form>
 </div>
+
