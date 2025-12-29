@@ -22,20 +22,17 @@ class CustomerHandler
 		$this->service = new CustomerService();
 	}
 
-	/**
-	 * GET /customer/index
-	 * Відображення списку всіх клієнтів.
-	 */
+	
 	public function index(): void
 	{
 		try {
 			$customers = $this->service->getAll();
 
-			// Обробка повідомлень із GET-параметрів
+			
 			$message = null;
-			if (isset($_GET['updated'])) {
+			if (isset($_GET['updated']) && $_GET['updated'] === '1') {
 				$message = 'Клієнта успішно оновлено.';
-			} elseif (isset($_GET['deleted'])) {
+			} elseif (isset($_GET['deleted']) && $_GET['deleted'] === '1') {
 				$message = 'Клієнта видалено.';
 			}
 
@@ -53,10 +50,7 @@ class CustomerHandler
 		}
 	}
 
-	/**
-	 * GET /customer/create
-	 * Відображення форми створення нового клієнта.
-	 */
+	
 	public function create(): void
 	{
 		$viewData = [
@@ -70,10 +64,7 @@ class CustomerHandler
 		View::render('customers/create', $viewData);
 	}
 
-	/**
-	 * POST /customer/store
-	 * Обробка запиту на створення клієнта.
-	 */
+	
 	public function store(): void
 	{
 		try {
@@ -92,7 +83,7 @@ class CustomerHandler
 				'error' => $e->getMessage(),
 				'input' => $_POST
 			]);
-			// У разі помилки повертаємо введені дані назад у форму
+			
 			View::render('customers/create', [
 				'error' => 'Помилка: ' . $e->getMessage(),
 				'form'  => $_POST // Уніфікована назва змінної
@@ -100,12 +91,14 @@ class CustomerHandler
 		}
 	}
 
-	/**
-	 * GET /customer/show&id={id}
-	 * Перегляд інформації про одного клієнта.
-	 */
+	
 	public function show(int $id): void
 	{
+		if ($id <= 0) {
+			$this->render404();
+			return;
+		}
+
 		try {
 			$customer = $this->service->getById($id);
 			if (!$customer) {
@@ -118,12 +111,14 @@ class CustomerHandler
 		}
 	}
 
-	/**
-	 * GET /customer/edit&id={id}
-	 * Відображення форми редагування клієнта.
-	 */
+	
 	public function edit(int $id): void
 	{
+		if ($id <= 0) {
+			$this->render404();
+			return;
+		}
+
 		try {
 			$customer = $this->service->getById($id);
 			if (!$customer) {
@@ -131,7 +126,7 @@ class CustomerHandler
 				return;
 			}
 
-			// Використовуємо допоміжний метод для підготовки даних форми
+			
 			$formData = $this->mapCustomerToForm($customer);
 
 			View::render('customers/edit', [
@@ -142,15 +137,18 @@ class CustomerHandler
 		}
 	}
 
-	/**
-	 * POST /customer/update&id={id}
-	 * Обробка оновлення даних клієнта.
-	 */
+	
 	public function update(int $id): void
 	{
+		if ($id <= 0) {
+			http_response_code(400);
+			echo 'Некоректний ID';
+			exit;
+		}
+
 		try {
 			$dto = UpdateCustomerDTO::fromArray($_POST);
-			// Примусово встановлюємо ID з маршруту (захист від підміни ID у формі)
+			
 			$dto->id = $id;
 
 			$this->service->updateCustomer($id, $dto);
@@ -158,7 +156,7 @@ class CustomerHandler
 			header('Location: ' . self::BASE_URL . '?r=customer/index&updated=1');
 			exit;
 		} catch (\Throwable $e) {
-			// У разі помилки повертаємо те, що надіслав користувач + ID
+			
 			$formData = $_POST;
 			$formData['id'] = $id;
 
@@ -169,12 +167,15 @@ class CustomerHandler
 		}
 	}
 
-	/**
-	 * POST /customer/destroy&id={id}
-	 * Видалення клієнта.
-	 */
+	
 	public function destroy(int $id): void
 	{
+		if ($id <= 0) {
+			http_response_code(400);
+			echo 'Некоректний ID';
+			exit;
+		}
+
 		try {
 			$this->service->deleteCustomer($id);
 			header('Location: ' . self::BASE_URL . '?r=customer/index&deleted=1');
@@ -192,9 +193,7 @@ class CustomerHandler
 		}
 	}
 
-	/**
-	 * Допоміжний метод: Перетворює об'єкт Customer на масив для форми.
-	 */
+	
 	private function mapCustomerToForm(Customer $customer): array
 	{
 		return [
@@ -207,12 +206,12 @@ class CustomerHandler
 		];
 	}
 
-	/**
-	 * Допоміжний метод: Рендер помилки 404 (клієнта не знайдено).
-	 */
+	
 	private function render404(): void
 	{
 		http_response_code(404);
 		View::render('customers/index', ['error' => 'Клієнта не знайдено']);
 	}
 }
+
+

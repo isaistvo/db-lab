@@ -1,5 +1,5 @@
 <?php
-/** @var array $items */
+
 ?>
 
 <div>
@@ -64,3 +64,4 @@
         </div>
     <?php endif; ?>
 </div>
+

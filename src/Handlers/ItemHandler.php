@@ -48,6 +48,12 @@ class ItemHandler
 
     public function show(int $id): void
     {
+        if ($id <= 0) {
+            http_response_code(404);
+            View::render('items/index', ['items' => [], 'error' => 'Некоректний ID']);
+            return;
+        }
+
         try {
             $item = $this->service->getById($id);
             if (!$item) {
@@ -171,3 +177,5 @@ class ItemHandler
         }
     }
 }
+
+

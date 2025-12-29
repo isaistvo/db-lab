@@ -4,10 +4,12 @@ namespace Src\Core;
 
 use PDO;
 use PDOException;
+use Src\Core\Config;
 
 final class Database
 {
-	private static ?Database $instance = null;
+	private static array $instances = [];
+	private static ?array $currentConfig = null;
 	private PDO $connection;
 
 	private function __construct(array $config)
@@ -23,7 +25,8 @@ final class Database
 
 			Logger::info("Database connection established successfully", [
 				'host' => $config['host'],
-				'dbname' => $config['dbname']
+				'dbname' => $config['dbname'],
+				'user' => $config['user']
 			]);
 
 		} catch (PDOException $e) {
@@ -36,15 +39,52 @@ final class Database
 		}
 	}
 
-	public static function getInstance(?array $config = null): Database
+	public static function getInstance(array $config = null): Database
 	{
-		if (self::$instance === null) {
-			if ($config === null) {
-				throw new \RuntimeException("База даних не ініціалізована. Передайте конфігурацію при першому виклику.");
-			}
-			self::$instance = new self($config);
+		if ($config !== null) {
+			self::$currentConfig = $config;
+		} elseif (self::$currentConfig === null) {
+			
+			self::$currentConfig = self::getDefaultConfig();
 		}
-		return self::$instance;
+
+		$config = self::$currentConfig;
+
+		
+		$key = md5(serialize([
+			'host' => $config['host'],
+			'dbname' => $config['dbname'],
+			'user' => $config['user'],
+			'charset' => $config['charset']
+		]));
+
+		if (!isset(self::$instances[$key])) {
+			self::$instances[$key] = new self($config);
+		}
+
+		return self::$instances[$key];
+	}
+
+	public static function setConfig(array $config): void
+	{
+		self::$currentConfig = $config;
+	}
+
+	private static function getDefaultConfig(): array
+	{
+		
+		try {
+			$config = new Config(__DIR__ . '/../../.env');
+			return [
+				'host'     => $config->get('DB_HOST'),
+				'dbname'   => $config->get('DB_NAME'),
+				'user'     => $config->get('DB_USER'),
+				'password' => $config->get('DB_PASS'),
+				'charset'  => $config->get('DB_CHARSET', 'utf8mb4'),
+			];
+		} catch (\Exception $e) {
+			throw new \RuntimeException("Не удалось загрузить конфигурацию БД: " . $e->getMessage());
+		}
 	}
 
 	public function getConnection(): PDO
@@ -59,3 +99,5 @@ final class Database
 		throw new \Exception("Cannot unserialize a singleton.");
 	}
 }
+
+

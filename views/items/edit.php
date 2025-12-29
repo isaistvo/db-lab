@@ -1,10 +1,5 @@
 <?php
-/**
- * Passive view for editing an item
- * Expected variables:
- * - array $form with keys: id, name, price, quantity, guarantee
- * - string|null $error
- */
+
 ?>
 
 <div class="form-card">
@@ -41,3 +36,4 @@
         </form>
     <?php endif; ?>
 </div>
+

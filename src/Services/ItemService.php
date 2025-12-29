@@ -69,8 +69,10 @@ class ItemService
 
 	public function deleteItem(int $id): void
 	{
-		// Тут можна додати перевірку: не видаляти, якщо товар є в замовленнях
+		
 		$this->repository->delete($id);
 		Logger::info("Item deleted", ['item_id' => $id]);
 	}
 }
+
+

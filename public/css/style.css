@@ -112,14 +112,14 @@ nav a {
 /* --- Main Content Area --- */
 main {
     background: var(--card-bg);
-    padding: 30px; /* Чуть меньше отступы внутри для экономии места */
+    padding: 30px; /* Трохи менше відступи всередині для економії місця */
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     flex: 1;
 
-    /* !!! ВАЖНО ДЛЯ ТАБЛИЦ !!! */
-    min-width: 0; /* Позволяет flex-элементу сжиматься, если контент внутри слишком широкий */
-    overflow: hidden; /* Обрезает лишнее, заставляя работать внутренний скролл таблицы */
+    /* !!! ВАЖЛИВО ДЛЯ ТАБЛИЦЬ !!! */
+    min-width: 0; /* Дозволяє flex-елементу стискатися, якщо контент всередині занадто широкий */
+    overflow: hidden; /* Обрізає зайве, змушуючи працювати внутрішній скрол таблиці */
 }
 
 /* --- Page Header --- */
@@ -142,11 +142,11 @@ main {
 /* --- Table Responsiveness --- */
 .table-responsive {
     width: 100%;
-    overflow-x: auto; /* Горизонтальный скролл ТОЛЬКО если таблица не влезает */
+    overflow-x: auto; /* Горизонтальний скрол ТІЛЬКИ якщо таблиця не вміщується */
     border-radius: 8px;
     border: 1px solid var(--border-color);
 
-    /* Стили скроллбара (для Webkit) */
+    /* Стилі скролбару (для Webkit) */
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) var(--card-bg);
 }
@@ -157,7 +157,7 @@ main {
     margin: 0;
     background: transparent;
     border: none;
-    white-space: nowrap; /* Заставляет таблицу растягиваться по контенту */
+    white-space: nowrap; /* Змушує таблицю розтягуватися по контенту */
 }
 
 .table thead th {
@@ -350,10 +350,21 @@ footer {
 .alert {
     padding: 15px;
     margin-bottom: 25px;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
 }
-.alert-success { background: rgba(16, 185, 129, 0.15); color: #a7f3d0; }
-.alert-error { background: rgba(239, 68, 68, 0.15); color: #fecaca; }
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #a7f3d0;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fecaca;
+    border-color: rgba(239, 68, 68, 0.3);
+}
 
 .back-link {
     display: inline-flex;
@@ -431,4 +442,56 @@ footer {
 @media (max-width: 1024px) {
     .page-order-show .sidebar { width: 200px; }
     .page-order-show .multi-add-actions .muted { flex-basis: 100%; }
+}
+
+/* --- Auth Pages Styles --- */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+.auth-form {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 450px;
+    border: 1px solid var(--border-color);
+}
+
+.auth-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--text-color);
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 25px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.auth-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* --- Required Field Indicator --- */
+.required {
+    color: #ef4444;
+    font-weight: bold;
 }

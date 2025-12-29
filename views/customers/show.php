@@ -1,5 +1,5 @@
 <?php
-/** @var \Src\Models\Customer|null $customer */
+
 ?>
 <div class="form-card">
     <h1>Перегляд клієнта</h1>
@@ -22,3 +22,4 @@
         </div>
     <?php endif; ?>
 </div>
+

@@ -1,9 +1,5 @@
 <?php
-/**
- * Expected variables:
- * - array $form with keys: id, firstName, lastName, city, street, zipCode
- * - string|null $error
- */
+
 ?>
 <div class="form-card">
     <h1>Редагувати клієнта</h1>
@@ -43,3 +39,4 @@
         </form>
     <?php endif; ?>
 </div>
+

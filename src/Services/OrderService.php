@@ -44,7 +44,7 @@ class OrderService
         if ($dto->employeeId <= 0) {
             throw new \InvalidArgumentException('EmployeeID is required');
         }
-        // Optional: trim and enforce max length similar to DB schema
+        
         $dto->shipCity = $dto->shipCity !== null ? trim($dto->shipCity) : null;
         $dto->shipStreet = $dto->shipStreet !== null ? trim($dto->shipStreet) : null;
         $dto->shipZip = $dto->shipZip !== null ? trim($dto->shipZip) : null;
@@ -84,11 +84,9 @@ class OrderService
         Logger::info("Order deleted", ['order_id' => $id]);
     }
 
-    // --- Order Items logic ---
+    
 
-    /**
-     * @return OrderItem[]
-     */
+    
     public function getItemsByOrder(int $orderId): array
     {
         if ($orderId <= 0) {
@@ -151,9 +149,7 @@ class OrderService
         }
     }
 
-    /**
-     * Returns all available products (items) for selection in the UI
-     */
+    
     public function getAllItems(): array
     {
         return $this->productRepository->findAll();
@@ -170,9 +166,9 @@ class OrderService
 
             $existing = $this->itemRepository->findOne($orderId, $productId);
             if ($existing) {
-                // Return stock back
+                
                 $this->productRepository->increaseStock($productId, $existing->quantity);
-                // Delete line
+                
                 $this->itemRepository->deleteByOrderAndProduct($orderId, $productId);
             }
 
@@ -185,10 +181,7 @@ class OrderService
         }
     }
 
-    /**
-     * Add or update multiple items in one transaction.
-     * $items: array of ['product_id'=>int,'quantity'=>int,'sold_price'=>float]
-     */
+    
     public function addItemsBulk(int $orderId, array $items): void
     {
         if ($orderId <= 0) {
@@ -198,7 +191,7 @@ class OrderService
             return; // nothing to do
         }
 
-        // Normalize input and validate
+        
         $normalized = [];
         foreach ($items as $row) {
             $pid = (int)($row['product_id'] ?? 0);
@@ -220,10 +213,10 @@ class OrderService
         try {
             $pdo->beginTransaction();
 
-            // Process each line: compute delta vs existing, adjust stock, upsert
+            
             foreach ($normalized as $pid => $row) {
                 $qty = $row['quantity'];
-                // Ensure product exists and get default price if needed
+                
                 $product = $this->productRepository->findById($pid);
                 if (!$product) {
                     throw new \RuntimeException('Product not found: #' . $pid);
@@ -261,16 +254,7 @@ class OrderService
         }
     }
 
-    /**
-     * Returns inventory info for a single order, including line items with product names and totals
-     * Structure:
-     * [
-     *   'items' => [
-     *      ['productId'=>int,'name'=>string,'quantity'=>int,'soldPrice'=>float,'lineTotal'=>float], ...
-     *   ],
-     *   'totals' => ['itemCount'=>int,'totalQuantity'=>int,'totalValue'=>float]
-     * ]
-     */
+    
     public function getOrderInventory(int $orderId): array
     {
         if ($orderId <= 0) {
@@ -279,7 +263,7 @@ class OrderService
 
         $lines = $this->itemRepository->findByOrder($orderId);
 
-        // Map productId -> name using ItemRepository
+        
         $itemsMap = [];
         foreach ($lines as $li) {
             $pid = $li->productId;
@@ -315,3 +299,5 @@ class OrderService
         ];
     }
 }
+
+

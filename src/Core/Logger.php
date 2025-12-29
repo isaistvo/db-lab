@@ -15,15 +15,15 @@ class Logger
         if (self::$logger === null) {
             self::$logger = new MonologLogger('app');
 
-            // Add a unique ID to each log record
+            
             self::$logger->pushProcessor(new UidProcessor());
 
-            // Log to a file
+            
             $logFile = __DIR__ . '/../../logs/app.log';
             $handler = new StreamHandler($logFile, MonologLogger::DEBUG);
             self::$logger->pushHandler($handler);
 
-            // You can add more handlers here, like for errors only
+            
             $errorLogFile = __DIR__ . '/../../logs/error.log';
             $errorHandler = new StreamHandler($errorLogFile, MonologLogger::WARNING);
             self::$logger->pushHandler($errorHandler);
@@ -57,3 +57,5 @@ class Logger
         self::getLogger()->critical($message, $context);
     }
 }
+
+

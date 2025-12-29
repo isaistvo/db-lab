@@ -1,5 +1,5 @@
 <?php
-/** @var array $orders */
+
 ?>
 
 <div>
@@ -62,3 +62,4 @@
         </div>
     <?php endif; ?>
 </div>
+

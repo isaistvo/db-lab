@@ -1,9 +1,5 @@
 <?php
-/**
- * Expected variables:
- * - Src\Models\Employee $employee
- * - string|null $error (optional)
- */
+
 ?>
 
 <div class="form-card">
@@ -32,3 +28,4 @@
         <a href="/db-lab/public/index.php?r=employee/index" class="btn">Повернутися</a>
     <?php endif; ?>
 </div>
+

@@ -1,13 +1,5 @@
 <?php
-/**
- * Passive view for creating an order
- * Variables:
- * - array $form (optional)
- * - array $customers
- * - array $employees
- * - string|null $message
- * - string|null $error
- */
+
 ?>
 
 <div class="form-card">
@@ -65,3 +57,4 @@
         <a href="/db-lab/public/index.php?r=order/index" class="btn" style="margin-left:8px;">До списку</a>
     </form>
 </div>
+
